@@ -39,6 +39,15 @@ export default function FactSwipeScreen() {
   }, []);
 
 
+  const handlePageSelected = (state) => {
+    //console.log(`Page ${state} selected`, state);
+  };
+
+  const handlePageScrollStateChanged = (state) => {
+    // console.log(`Page scroll state changed to ${state}`, state);
+  };
+
+
     const renderItem = ({item}) => {
         const backgroundColor = item.id === selectedId ? '#6e3b6e' : '#f9c2ff';
         const color = item.id === selectedId ? 'white' : 'black';
@@ -60,7 +69,7 @@ export default function FactSwipeScreen() {
        {isLoading && <Text>Loading...</Text>}
       {error && <Text>Error: {error.message}</Text>}
       { posts.data && posts.data.length > 0 && (
-        <PagerView style={styles.container} initialPage={0}>
+        <PagerView style={styles.container} initialPage={0} onPageSelected={handlePageSelected} onPageScrollStateChanged={handlePageScrollStateChanged}>
 
           {posts.data.map((item) => 
             <View style={styles.page} key={item.id}>
