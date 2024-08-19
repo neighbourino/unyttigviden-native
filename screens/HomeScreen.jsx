@@ -15,6 +15,7 @@ export default function HomeScreen({navigation}) {
             <Text>Welcome home, {user.name}</Text>
             <Button title="Logout" onPress={handleLogout} />
             <Button title="Facts" onPress={() => navigation.navigate("FactsList")} />
+                            <Button title="Facts Swipe" onPress={() => navigation.navigate("FactSwipe")} />
         </SafeAreaView>
     );
 }

@@ -7,6 +7,7 @@ import RegisterScreen from "./screens/RegisterScreen";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import FactListScreen from "./screens/FactListScreen";
 import AuthContext from './contexts/AuthContext';
+import FactSwipeScreen from "./screens/FactSwipeScreen";
 import { getUser } from './services/AuthService';
 import { useState, useEffect } from 'react';
 
@@ -46,12 +47,14 @@ export default function App() {
             <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="FactsList" component={FactListScreen} />
+                        <Stack.Screen name="FactSwipe" component={FactSwipeScreen} />
             </>
           ) : (
             <>
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+
             </>
             
           )}

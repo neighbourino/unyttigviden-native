@@ -5,7 +5,7 @@ import { Button, SafeAreaView, Text,
   StatusBar, TouchableOpacity } from "react-native";
 import AuthContext from "../contexts/AuthContext";
 import { React, useContext, useEffect, useState } from "react";
-
+import PagerView from 'react-native-pager-view';
 import axios from "../utils/axios";
 
 
@@ -16,7 +16,7 @@ const Item = ({item, onPress, backgroundColor, textColor}) => (
   </TouchableOpacity>
 );
 
-export default function FactListScreen() {
+export default function FactSwipeScreen() {
     const [selectedId, setSelectedId] = useState();
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -54,24 +54,26 @@ export default function FactListScreen() {
         );
     };
 
-
-    console.log('posts', posts);
-
   
     return (
-        <SafeAreaView>
-            {isLoading && <Text>Loading...</Text>}
+      <>
+       {isLoading && <Text>Loading...</Text>}
       {error && <Text>Error: {error.message}</Text>}
       { posts.data && posts.data.length > 0 && (
-        <FlatList
-        data={posts.data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        extraData={selectedId}
-      />
+        <PagerView style={styles.container} initialPage={0}>
+
+          {posts.data.map((item) => 
+            <View style={styles.page} key={item.id}>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text>{item.content}</Text>
+        </View>
+            )}
+        
+      </PagerView>
       )}
-            
-        </SafeAreaView>
+      </>
+      
+       
     );
 }
 
@@ -79,7 +81,6 @@ export default function FactListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
   },
   item: {
     backgroundColor: '#f9c2ff',
@@ -88,6 +89,24 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   title: {
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10
+  },
+  page: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 40,
+    marginTop: 20,
+    borderRadius: 10,
+    dropShadowColor: '#000',
+    dropShadowOffset: { width: 0, height: 2 },
+    dropShadowRadius: 10,
+    borderWidth: 1,
+      borderColor: '#eee',
   },
 });
