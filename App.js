@@ -1,20 +1,63 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import LoginScreen from "./screens/LoginScreen";
+import HomeScreen from "./screens/HomeScreen";
+import SplashScreen from "./screens/SplashScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
+import FactListScreen from "./screens/FactListScreen";
+import AuthContext from './contexts/AuthContext';
+import { getUser } from './services/AuthService';
+import { useState, useEffect } from 'react';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [user, setUser] = useState();
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    async function runEffect() {
+      try {
+          const user = await getUser();
+          setUser(user);
+      } catch (e) {
+        console.log('Failed to get user', e);
+      }
+    
+      setStatus("idle");
+    
+    }
+
+
+    runEffect();
+
+  }, []);
+
+  if (status === "loading") {
+    return <SplashScreen />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <AuthContext.Provider value={{ user, setUser }}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {user ? (
+            <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="FactsList" component={FactListScreen} />
+            </>
+          ) : (
+            <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+            </>
+            
+          )}
+          
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
