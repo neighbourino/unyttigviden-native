@@ -5,8 +5,6 @@ let access_token = null;
 export async function setAccessToken(newToken) {
     access_token = newToken;
 
-    console.log('newToken', newToken);
-
     if (access_token !== null) {
         await SecureStore.setItemAsync("access_token", access_token);
         
