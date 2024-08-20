@@ -10,6 +10,7 @@ import AuthContext from './contexts/AuthContext';
 import FactSwipeScreen from "./screens/FactSwipeScreen";
 import { getUser } from './services/AuthService';
 import { useState, useEffect } from 'react';
+import { PaperProvider } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,13 +35,19 @@ export default function App() {
     runEffect();
 
   }, []);
+  
+  
+      
+    
 
   if (status === "loading") {
-    return <SplashScreen />;
+    return <PaperProvider><SplashScreen /></PaperProvider>;
   }
 
   return (
+    
     <AuthContext.Provider value={{ user, setUser }}>
+      <PaperProvider>
       <NavigationContainer>
         <Stack.Navigator>
           {user ? (
@@ -61,6 +68,7 @@ export default function App() {
           
         </Stack.Navigator>
       </NavigationContainer>
+      </PaperProvider>
     </AuthContext.Provider>
   );
 }
