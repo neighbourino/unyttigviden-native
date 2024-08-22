@@ -1,18 +1,16 @@
 import axios from 'axios';
-import store from '../services/store';
-import { clearToken } from '../services/authSlice';
+import store from './store';
+import { clearToken } from './authSlice';
 
 const api = axios.create({
   baseURL: 'http://192.168.68.107:8000/api/v1',
   withCredentials: true,
 });
 
-// Interceptor to add the token to the Authorization header
-// Interceptor to add the token to the Authorization header
 api.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth.token;  // Access the token from the Redux store
-    console.log('token', token);
+    const state = store.getState();
+    const token = state.auth ? state.auth.token : null; // Safely access state.auth
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
