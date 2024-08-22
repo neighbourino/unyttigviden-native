@@ -33,6 +33,12 @@ export const logout = async () => {
   store.dispatch(clearToken());
 };
 
+// Forgot password function
+export const forgotPassword = async (email) => {
+  const response = await api.post('/forgot-password', { email });
+  return response.data;
+};
+
 // Get user function
 export const getUser = async () => {
   const response = await api.get('/user');

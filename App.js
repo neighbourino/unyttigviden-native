@@ -16,10 +16,12 @@ import {
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
 import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
 import HomeScreen from "./screens/HomeScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import FactsScreen from "./screens/FactsScreen";
+import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import { useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import store, { persistor } from "./services/store";
@@ -122,6 +124,17 @@ function CustomDrawerContent(props) {
               }}
               icon="login"
             />
+
+            <PaperDrawer.Item
+              label="Register"
+              active={active === "register"}
+              onPress={() => {
+                setActive("register");
+                props.navigation.navigate("Register");
+              }}
+              icon="account"
+            />
+            
           </PaperDrawer.Section>
         </>
       )}
@@ -149,6 +162,8 @@ const AuthNavigator = () => {
         <>
           <Drawer.Screen name="Facts" component={FactsScreen} />
           <Drawer.Screen name="Login" component={LoginScreen} />
+          <Drawer.Screen name="Register" component={RegisterScreen} />
+          <Drawer.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         </>
       )}
     </Drawer.Navigator>

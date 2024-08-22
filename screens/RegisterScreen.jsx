@@ -10,37 +10,41 @@ import {
 } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { setToken } from "../services/authSlice";
-import { login } from "../services/api";
 import { useNavigation } from "@react-navigation/native";
+import api from "../services/api";
 
-const LoginScreen = () => {
+const RegisterScreen = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const theme = useTheme();
   const navigation = useNavigation();
 
-  const handleSubmit = async () => {
+  const handleRegister = async () => {
     setLoading(true);
-    setErrors({});
-    setError("");
+    setError(null);
     try {
-      const data = await login({
+      const response = await api.post("/register", {
+        name,
         email,
         password,
         device_id: `${Platform.OS} ${Platform.Version}`,
       });
-
-      dispatch(setToken(data.token));
-      navigation.replace("Home");
+      // Assuming the response contains the token
+      const { token } = response.data;
+      dispatch(setToken(token));
+      navigation.replace("Home"); // Navigate to Home after successful registration
     } catch (err) {
       if (err.response?.status == 422) {
         setErrors(err.response.data.errors);
       } else {
-        setError("Failed to login: " + err.message);
+        setError(
+          "Failed to register: " + err.response?.data?.message || err.message
+        );
       }
     } finally {
       setLoading(false);
@@ -65,43 +69,49 @@ const LoginScreen = () => {
             textAlign: "center",
           }}
         >
-          Login
+          Register
         </Headline>
       </View>
+
       <View style={styles.container}>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            label="Email"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <HelperText type="error" visible={errors.email}>
-            {errors.email}
-          </HelperText>
-        </View>
-
-        <View style={styles.inputWrapper}>
-          <TextInput
-            label="Password"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            secureTextEntry={true}
-          />
-          <HelperText type="error" visible={errors.password}>
-            {errors.password}
-          </HelperText>
-        </View>
+        <TextInput
+          label="Name"
+          value={name}
+          onChangeText={(text) => setName(text)}
+          style={styles.input}
+        />
+        <HelperText type="error" visible={errors.name}>
+          {errors.name}
+        </HelperText>
+        <TextInput
+          label="Email"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          style={styles.input}
+        />
+        <HelperText type="error" visible={errors.email}>
+          {errors.email}
+        </HelperText>
+        <TextInput
+          label="Password"
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+          secureTextEntry
+          style={styles.input}
+        />
+        <HelperText type="error" visible={errors.password}>
+          {errors.password}
+        </HelperText>
         <Button
           mode="contained"
-          onPress={handleSubmit}
+          onPress={handleRegister}
           loading={loading}
           disabled={loading}
           style={styles.button}
         >
-          Login
+          Register
         </Button>
         {error && (
           <Text style={{ color: theme.colors.error, padding: 20 }}>
@@ -111,18 +121,10 @@ const LoginScreen = () => {
 
         <Button
           mode="text"
-          onPress={() => navigation.navigate("Register")}
+          onPress={() => navigation.navigate("Login")}
           style={styles.button}
         >
-          Don't have an account? Register
-        </Button>
-
-        <Button
-          mode="text"
-          onPress={() => navigation.navigate("ForgotPassword")}
-          style={styles.button}
-        >
-          Forgot Password?
+          Already have an account? Login
         </Button>
       </View>
     </>
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-  inputWrapper: {
+  input: {
     marginBottom: 20,
   },
   button: {
@@ -143,4 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default RegisterScreen;
