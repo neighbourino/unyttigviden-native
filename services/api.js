@@ -51,4 +51,16 @@ export const getFacts = async () => {
   return response.data;
 };
 
+// Get categories function
+export const getCategories = async () => {
+  const response = await api.get('/categories');
+  return response.data;
+};
+
+// Get category detail function
+export const getCategoryDetail = async (categoryId) => {
+  const response = await api.get(`/categories/${categoryId}`);
+  return response.data;
+};
+
 export default api;

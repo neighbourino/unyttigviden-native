@@ -3,11 +3,16 @@ import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, ActivityIndicator, useTheme } from 'react-native-paper';
 import { getFacts } from '../services/api';
 
-const FactsScreen = () => {
+const FactsScreen = ({ route }) => {
   const [facts, setFacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const theme = useTheme();
+
+  // const { categoryId, categoryTitle } = route.params;
+
+  // console.log('categoryId', categoryId);
+  //   console.log('categoryTitle', categoryTitle);
 
   useEffect(() => {
     const fetchFacts = async () => {

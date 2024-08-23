@@ -21,6 +21,8 @@ import HomeScreen from "./screens/HomeScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import FactsScreen from "./screens/FactsScreen";
+import CategoriesScreen from "./screens/CategoriesScreen";
+import CategoryDetailScreen from "./screens/CategoryDetailScreen";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import { useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -92,7 +94,17 @@ function CustomDrawerContent(props) {
             icon="head-question"
           />
 
-          <Divider style={{ marginTop: 5, marginBottom: 5,  padding: 0 }} />
+          <PaperDrawer.Item
+            label="Categories"
+            active={active === "categories"}
+            onPress={() => {
+              setActive("categories");
+              props.navigation.navigate("Categories");
+            }}
+            icon="shape"
+          />
+
+          <Divider style={{ marginTop: 5, marginBottom: 5, padding: 0 }} />
           <PaperDrawer.Item
             label="Profile"
             active={active === "profile"}
@@ -134,7 +146,6 @@ function CustomDrawerContent(props) {
               }}
               icon="account"
             />
-            
           </PaperDrawer.Section>
         </>
       )}
@@ -154,7 +165,8 @@ const AuthNavigator = () => {
         <>
           <Drawer.Screen name="Home" component={HomeScreen} />
           <Drawer.Screen name="Facts" component={FactsScreen} />
-
+          <Drawer.Screen name="Categories" component={CategoriesScreen} />
+          <Drawer.Screen name="CategoryDetail" component={CategoryDetailScreen} />
           <Drawer.Screen name="Settings" component={SettingsScreen} />
           <Drawer.Screen name="Profile" component={ProfileScreen} />
         </>
@@ -163,7 +175,10 @@ const AuthNavigator = () => {
           <Drawer.Screen name="Facts" component={FactsScreen} />
           <Drawer.Screen name="Login" component={LoginScreen} />
           <Drawer.Screen name="Register" component={RegisterScreen} />
-          <Drawer.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Drawer.Screen
+            name="ForgotPassword"
+            component={ForgotPasswordScreen}
+          />
         </>
       )}
     </Drawer.Navigator>
@@ -174,13 +189,13 @@ const App = () => {
   return (
     <Provider store={store}>
       <SafeAreaView style={styles.drawerContent}>
-      <PersistGate loading={null} persistor={persistor}>
-        <PaperProvider>
-          <NavigationContainer>
-            <AuthNavigator />
-          </NavigationContainer>
-        </PaperProvider>
-      </PersistGate>
+        <PersistGate loading={null} persistor={persistor}>
+          <PaperProvider>
+            <NavigationContainer>
+              <AuthNavigator />
+            </NavigationContainer>
+          </PaperProvider>
+        </PersistGate>
       </SafeAreaView>
     </Provider>
   );
