@@ -33,9 +33,8 @@ const LoginScreen = () => {
         password,
         device_id: `${Platform.OS} ${Platform.Version}`,
       });
-
       dispatch(setToken(data.token));
-      navigation.replace("Home");
+      navigation.navigate("Home");
     } catch (err) {
       if (err.response?.status == 422) {
         setErrors(err.response.data.errors);

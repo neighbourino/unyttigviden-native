@@ -1,16 +1,16 @@
-import axios from 'axios';
-import store from './store';
-import { clearToken } from './authSlice';
+import axios from "axios";
+import store from "./store";
+import { clearToken } from "./authSlice";
 
 const api = axios.create({
-  baseURL: 'http://192.168.68.107:8000/api/v1',
+  baseURL: "https://xd5zpvtomj.sharedwithexpose.com/api/v1",
   withCredentials: true,
 });
 
 api.interceptors.request.use(
   (config) => {
     const state = store.getState();
-    const token = state.auth ? state.auth.token : null; // Safely access state.auth
+    const token = state.reducer.auth ? state.reducer.auth.token : null; // Safely access state.auth
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -23,37 +23,40 @@ api.interceptors.request.use(
 
 // Login function
 export const login = async (credentials) => {
-  const response = await api.post('/login', credentials);
+  const response = await api.post("/login", credentials);
   return response.data;
 };
 
 // Logout function
 export const logout = async () => {
-  await api.post('/logout');
+  await api.post("/logout");
   store.dispatch(clearToken());
 };
 
 // Forgot password function
 export const forgotPassword = async (email) => {
-  const response = await api.post('/forgot-password', { email });
+  const response = await api.post("/forgot-password", { email });
   return response.data;
 };
 
 // Get user function
 export const getUser = async () => {
-  const response = await api.get('/user');
+  const response = await api.get("/user");
   return response.data;
 };
 
-// Get facts function
-export const getFacts = async () => {
-  const response = await api.get('/facts');
+export const getFacts = async (filters = {}) => {
+  const response = await api.get('/facts', {
+    params: {
+      'filter[category_id]': filters.selectedCategories,
+    },
+  });
   return response.data;
 };
 
 // Get categories function
 export const getCategories = async () => {
-  const response = await api.get('/categories');
+  const response = await api.get("/categories");
   return response.data;
 };
 

@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import PagerView from "react-native-pager-view";
 import { Avatar, Button, Card, Text, IconButton } from "react-native-paper";
 
@@ -19,10 +19,11 @@ const Item = ({ item, onPress, backgroundColor, textColor }) => (
 );
 
 export default function FactCards({facts}) {
-  const [selectedId, setSelectedId] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [factItems, setFactItems] = useState([]);
 
+  useEffect(() => {
+    setFactItems(facts);
+  }, [facts]);
 
   const handlePageSelected = (state) => {
     //console.log(`Page ${state} selected`, state);
@@ -47,7 +48,7 @@ export default function FactCards({facts}) {
         >
           {facts.map((item) => (
             <View style={styles.page} key={item.id}>
-              <Card style={styles.card} elevation={0}>
+              <Card style={styles.card} elevation={1}>
                 <Card.Title title={item.title} left={LeftContent} />
                 <Card.Content style={{ flexGrow: 1, flexShrink: 1, height: "80%" }}>
                   <Text style={{ fontSize: 16, lineHeight: 24 }}>
@@ -83,5 +84,9 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
+    backgroundColor: '#ffffff',
+    border: 1,
+    borderColor: '#f9f9f9',
+    bprderRadius: 5,
   },
 });

@@ -8,12 +8,14 @@ import {
   View,
   TouchableRipple,
   Avatar,
+  Icon, MD3Colors
 } from "react-native-paper";
 import { Provider } from "react-redux";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
+  DrawerToggleButton
 } from "@react-navigation/drawer";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -33,7 +35,7 @@ const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent(props) {
   const [active, setActive] = useState("");
-  const token = useSelector((state) => (state.auth ? state.auth.token : null));
+  const token = useSelector((state) => (state.reducer.auth ? state.reducer.auth.token : null));
   const [user, setUser] = useState([null]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -63,11 +65,14 @@ function CustomDrawerContent(props) {
                 props.navigation.navigate("Profile");
               }}
               icon={() => (
+                
                 <Avatar.Image
                   source={{
-                    uri: "https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg",
+                    uri: (user.profile_image_url) ? user.profile_image_url : "https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg",
                   }}
                   size={40}
+                  style={{width: 40, height: 40}}
+                  resizeMode="cover"
                 />
               )}
             />
@@ -154,12 +159,18 @@ function CustomDrawerContent(props) {
 }
 
 const AuthNavigator = () => {
-  const token = useSelector((state) => (state.auth ? state.auth.token : null));
+  const token = useSelector((state) => (state.reducer.auth ? state.reducer.auth.token : null));
 
   return (
     <Drawer.Navigator
-      initialRouteName={token ? "Home" : "Login"}
+      initialRouteName={token ? "Facts" : "Login"}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
+
+      screenOptions={{
+        drawerPosition: 'left',
+        headerRight: false,
+        headerLeft: () => <DrawerToggleButton/>,
+    }}
     >
       {token ? (
         <>

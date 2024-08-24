@@ -1,41 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
-import { Text, ActivityIndicator, useTheme } from 'react-native-paper';
-import { getFacts } from '../services/api';
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
+import { useSelector } from "react-redux";
+import { Text, ActivityIndicator, useTheme, Button, Toolbar, ToolbarAction, ToolbarBackAction, ToolbarContent, Appbar } from "react-native-paper";
+import { getFacts } from "../services/api";
+import FilterModal from "../components/FilterModal";
+import FactCards from "../components/FactCards";
 
 const FactsScreen = ({ route }) => {
+  const theme = useTheme();
+   const selectedCategories = useSelector( state =>  (state.reducer.filters ? state.reducer.filters.selectedCategories : []));
   const [facts, setFacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const theme = useTheme();
-
-  // const { categoryId, categoryTitle } = route.params;
-
-  // console.log('categoryId', categoryId);
-  //   console.log('categoryTitle', categoryTitle);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const fetchFacts = async () => {
       try {
-        const response = await getFacts();
+        const response = await getFacts({ selectedCategories });
         const data = response.data;
         setFacts(data);
       } catch (err) {
-        setError('Failed to load facts: ' + err.message);
+        setError("Failed to load facts: " + err.message);
       } finally {
-        setLoading(false);
+        
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
       }
     };
     fetchFacts();
-  }, []);
+  }, [selectedCategories]);
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator animating={true} size="large" />
-      </View>
-    );
-  }
+  const toggleFilterModal = () => {
+    setFilterModalVisible(!filterModalVisible);
+  };
+
 
   if (error) {
     return (
@@ -46,31 +47,44 @@ const FactsScreen = ({ route }) => {
   }
 
   return (
+    <>
     <View style={styles.container}>
-      <FlatList
-        data={facts}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.factItem}>
-            <Text>{item.title}</Text>
-          </View>
-        )}
-      />
+      <Appbar.Header style={{ backgroundColor: theme.colors.primary }}>
+        <Appbar.Content title="Facts" color={theme.colors.onPrimary} />
+        <Appbar.Action icon="filter" onPress={toggleFilterModal} color={theme.colors.onPrimary} />
+      </Appbar.Header>
+    
+      {loading ? <View style={styles.loadingContainer}><ActivityIndicator animating={true} size="large" /></View> : <FactCards facts={facts} />}
+
+      {/* <FactCards facts={facts} /> */}
+
+      <FilterModal visible={filterModalVisible} onDismiss={toggleFilterModal} />
     </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
+    paddingBottom: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   factItem: {
     marginBottom: 15,
     padding: 10,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
     borderRadius: 5,
+  },
+  loadingContainer: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "start",
+    alignItems: "center",
   },
 });
 
