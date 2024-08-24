@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
-import { Text, ActivityIndicator, useTheme, Button, Toolbar, ToolbarAction, ToolbarBackAction, ToolbarContent, Appbar } from "react-native-paper";
+import {
+  Text,
+  ActivityIndicator,
+  useTheme,
+  Appbar,
+} from "react-native-paper";
 import { getFacts } from "../services/api";
 import FilterModal from "../components/FilterModal";
 import FactCards from "../components/FactCards";
+import { useNavigation } from "@react-navigation/native";
 
 const FactsScreen = ({ route }) => {
   const theme = useTheme();
-   const selectedCategories = useSelector( state =>  (state.reducer.filters ? state.reducer.filters.selectedCategories : []));
+  const selectedCategories = useSelector((state) =>
+    state.reducer.filters ? state.reducer.filters.selectedCategories : []
+  );
   const [facts, setFacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     setLoading(true);
@@ -24,7 +33,6 @@ const FactsScreen = ({ route }) => {
       } catch (err) {
         setError("Failed to load facts: " + err.message);
       } finally {
-        
         setTimeout(() => {
           setLoading(false);
         }, 300);
@@ -37,7 +45,6 @@ const FactsScreen = ({ route }) => {
     setFilterModalVisible(!filterModalVisible);
   };
 
-
   if (error) {
     return (
       <View style={styles.container}>
@@ -48,18 +55,33 @@ const FactsScreen = ({ route }) => {
 
   return (
     <>
-    <View style={styles.container}>
-      <Appbar.Header style={{ backgroundColor: theme.colors.primary }}>
-        <Appbar.Content title="Facts" color={theme.colors.onPrimary} />
-        <Appbar.Action icon="filter" onPress={toggleFilterModal} color={theme.colors.onPrimary} />
-      </Appbar.Header>
-    
-      {loading ? <View style={styles.loadingContainer}><ActivityIndicator animating={true} size="large" /></View> : <FactCards facts={facts} />}
+      <View style={styles.container}>
+        <Appbar.Header>
+          {/* Custom Drawer Icon */}
+          <Appbar.Action
+            icon="menu" // Replace with your custom icon name
+            color={theme.colors.accent} // Custom color for the icon
+            onPress={() => navigation.toggleDrawer()}
+          />
+          <Appbar.Content title="Facts" />
+          <Appbar.Action icon="filter" onPress={toggleFilterModal} />
+        </Appbar.Header>
 
-      {/* <FactCards facts={facts} /> */}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator animating={true} size="large" />
+          </View>
+        ) : (
+          <FactCards facts={facts} />
+        )}
 
-      <FilterModal visible={filterModalVisible} onDismiss={toggleFilterModal} />
-    </View>
+        {/* <FactCards facts={facts} /> */}
+
+        <FilterModal
+          visible={filterModalVisible}
+          onDismiss={toggleFilterModal}
+        />
+      </View>
     </>
   );
 };

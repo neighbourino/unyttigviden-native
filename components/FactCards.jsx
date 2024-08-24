@@ -21,6 +21,7 @@ const Item = ({ item, onPress, backgroundColor, textColor }) => (
 export default function FactCards({facts}) {
   const [factItems, setFactItems] = useState([]);
 
+
   useEffect(() => {
     setFactItems(facts);
   }, [facts]);
@@ -39,14 +40,14 @@ export default function FactCards({facts}) {
 
   return (
     <>
-      {facts && facts.length > 0 && (
+      {factItems && factItems.length > 0 && (
         <PagerView
           style={styles.container}
           initialPage={0}
           onPageSelected={handlePageSelected}
           onPageScrollStateChanged={handlePageScrollStateChanged}
         >
-          {facts.map((item) => (
+          {factItems.map((item) => (
             <View style={styles.page} key={item.id}>
               <Card style={styles.card} elevation={1}>
                 <Card.Title title={item.title} left={LeftContent} />

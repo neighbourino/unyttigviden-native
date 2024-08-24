@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import { useTheme, Text } from 'react-native-paper';
-import CategoryTile from '../components/CategoryTile';
-import { getCategories } from '../services/api';
+import React, { useEffect, useState } from "react";
+import { View, FlatList, StyleSheet, ActivityIndicator } from "react-native";
+import { useTheme, Text, Appbar } from "react-native-paper";
+import CategoryTile from "../components/CategoryTile";
+import { getCategories } from "../services/api";
 
 const CategoriesScreen = ({ navigation }) => {
   const [categories, setCategories] = useState([]);
@@ -18,7 +18,10 @@ const CategoriesScreen = ({ navigation }) => {
 
         setCategories(data);
       } catch (err) {
-        setError('Failed to load categories: ' + (err.response?.data?.message || err.message));
+        setError(
+          "Failed to load categories: " +
+            (err.response?.data?.message || err.message)
+        );
       } finally {
         setLoading(false);
       }
@@ -28,9 +31,11 @@ const CategoriesScreen = ({ navigation }) => {
   }, []);
 
   const renderItem = ({ item }) => (
-    <CategoryTile 
+    <CategoryTile
       category={item}
-      onPress={() => navigation.navigate('CategoryDetail', { categoryId: item.id })}
+      onPress={() =>
+        navigation.navigate("CategoryDetail", { categoryId: item.id })
+      }
     />
   );
 
@@ -51,24 +56,46 @@ const CategoriesScreen = ({ navigation }) => {
   }
 
   return (
-    <FlatList
-      data={categories}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id.toString()}
-      numColumns={2}
-      contentContainerStyle={styles.container}
-    />
+    <View style={styles.container}>
+      <Appbar.Header>
+        {/* Custom Drawer Icon */}
+        <Appbar.Action
+          icon="menu" // Replace with your custom icon name
+          color={theme.colors.accent} // Custom color for the icon
+          onPress={() => navigation.toggleDrawer()}
+        />
+        <Appbar.Content title="Categories" />
+      </Appbar.Header>
+
+      <View style={styles.contentContainer}>
+        <FlatList
+          data={categories}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          contentContainerStyle={styles.list}
+        />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    paddingBottom: 20,
+  },
+  contentContainer: {
+    flex: 1,
     padding: 10,
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  list: {
+    padding: 10
   },
 });
 

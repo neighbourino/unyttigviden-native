@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
-import { useTheme, Headline } from 'react-native-paper';
-import { getCategoryDetail } from '../services/api';
-import FactCards from '../components/FactCards';
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
+import { useTheme, Headline, Appbar } from "react-native-paper";
+import { getCategoryDetail } from "../services/api";
+import FactCards from "../components/FactCards";
+import { useNavigation } from "@react-navigation/native";
+import { getHeaderTitle } from "@react-navigation/elements";
 
-const CategoryDetailScreen = ({ route }) => {
+const CategoryDetailScreen = ({ navigation, route, options, back }) => {
   const { categoryId } = route.params; // Get the category ID from navigation parameters
   const [category, setCategory] = useState(null);
+  const [facts, setFacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const theme = useTheme();
@@ -17,8 +20,12 @@ const CategoryDetailScreen = ({ route }) => {
         const response = await getCategoryDetail(categoryId);
         const data = response.data;
         setCategory(data);
+        setFacts(data.facts);
       } catch (err) {
-        setError('Failed to load category details: ' + (err.response?.data?.message || err.message));
+        setError(
+          "Failed to load category details: " +
+            (err.response?.data?.message || err.message)
+        );
       } finally {
         setLoading(false);
       }
@@ -53,33 +60,31 @@ const CategoryDetailScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-
+      <Appbar.Header>
+        <Appbar.BackAction onPress={() => navigation.navigate("Categories")} />
+        <Appbar.Content title={category.title} />
+      </Appbar.Header>
       <View
         style={{
           marginBottom: 0,
           backgroundColor: theme.colors.primary,
-          paddingTop: 30,
-          paddingBottom: 30,
+          paddingTop: 10,
+          paddingBottom: 10,
           borderRadius: 0,
         }}
       >
-        <Headline
+        <Text
           style={{
-            color: theme.colors.onPrimary,
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
-          {category.title}
-        </Headline>
-              <Text style={{
             color: theme.colors.onPrimary,
             fontWeight: "medium",
             textAlign: "center",
-          }}>{category.description}</Text>
+          }}
+        >
+          {category.description}
+        </Text>
       </View>
 
-      <FactCards facts={category.facts} />
+      <FactCards facts={facts} />
     </View>
   );
 };
@@ -90,17 +95,17 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   description: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
 });
 

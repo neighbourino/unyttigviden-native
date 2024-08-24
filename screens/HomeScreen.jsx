@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text, Button, ActivityIndicator, useTheme } from 'react-native-paper';
-import { logout, getUser } from '../services/api';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet } from "react-native";
+import {
+  Text,
+  Button,
+  ActivityIndicator,
+  useTheme,
+  Appbar,
+} from "react-native-paper";
+import { logout, getUser } from "../services/api";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const [user, setUser] = useState(null);
@@ -17,7 +23,7 @@ const HomeScreen = () => {
         const data = await getUser();
         setUser(data);
       } catch (err) {
-        setError('Failed to load user data: ' + err.message);
+        setError("Failed to load user data: " + err.message);
       } finally {
         setLoading(false);
       }
@@ -27,7 +33,7 @@ const HomeScreen = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigation.navigate('Login'); // Navigate to Login screen after logout
+    navigation.navigate("Login"); // Navigate to Login screen after logout
   };
 
   if (loading) {
@@ -48,16 +54,27 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {user ? (
-        <>
-          <Text style={styles.text}>Welcome, {user.name}!</Text>
-          <Button mode="contained" onPress={handleLogout} style={styles.button}>
-            Logout
-          </Button>
-        </>
-      ) : (
-        <Text>User not found</Text>
-      )}
+      <Appbar.Header>
+        {/* Custom Drawer Icon */}
+        <Appbar.Action
+          icon="menu" // Replace with your custom icon name
+          color={theme.colors.accent} // Custom color for the icon
+          onPress={() => navigation.toggleDrawer()}
+        />
+        <Appbar.Content title="Facts" />
+      </Appbar.Header>
+      <View style={styles.contentContainer}>
+        {user ? (
+          <>
+            <Text style={styles.text}>Welcome, {user.name}!</Text>
+            <Button mode="contained" onPress={handleLogout} style={styles.button}>
+              Logout
+            </Button>
+          </>
+        ) : (
+          <Text>User not found</Text>
+        )}
+      </View>
     </View>
   );
 };
@@ -65,7 +82,10 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    paddingBottom: 20,
+  },
+  contentContainer: {
+    flex: 1,
     padding: 20,
   },
   text: {

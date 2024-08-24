@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
+import { Provider } from "react-redux";
+import { useSelector } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+
+// theme + ui
 import {
   Provider as PaperProvider,
   Drawer as PaperDrawer,
@@ -8,15 +13,33 @@ import {
   View,
   TouchableRipple,
   Avatar,
-  Icon, MD3Colors
+  Icon,
+  MD3Colors,
+  MD3DarkTheme,
+  MD3LightTheme,
+  adaptNavigationTheme,
+  IconButton,
+  AppHeader,
 } from "react-native-paper";
-import { Provider } from "react-redux";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+
+import {
+  NavigationContainer,
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
+  useNavigation,
+} from "@react-navigation/native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
-  DrawerToggleButton
+  DrawerToggleButton,
+  DrawerActions,
 } from "@react-navigation/drawer";
+
+import { getHeaderTitle } from "@react-navigation/elements";
+
+import merge from "deepmerge";
+
+// screens
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import HomeScreen from "./screens/HomeScreen";
@@ -26,16 +49,26 @@ import FactsScreen from "./screens/FactsScreen";
 import CategoriesScreen from "./screens/CategoriesScreen";
 import CategoryDetailScreen from "./screens/CategoryDetailScreen";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
-import { useSelector } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
+
+// services
 import store, { persistor } from "./services/store";
 import { getUser } from "./services/api";
 
 const Drawer = createDrawerNavigator();
 
+const { LightTheme, DarkTheme } = adaptNavigationTheme({
+  reactNavigationLight: NavigationDefaultTheme,
+  reactNavigationDark: NavigationDarkTheme,
+});
+
+const CombinedDefaultTheme = merge(MD3LightTheme, LightTheme);
+const CombinedDarkTheme = merge(MD3DarkTheme, DarkTheme);
+
 function CustomDrawerContent(props) {
   const [active, setActive] = useState("");
-  const token = useSelector((state) => (state.reducer.auth ? state.reducer.auth.token : null));
+  const token = useSelector((state) =>
+    state.reducer.auth ? state.reducer.auth.token : null
+  );
   const [user, setUser] = useState([null]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -65,13 +98,14 @@ function CustomDrawerContent(props) {
                 props.navigation.navigate("Profile");
               }}
               icon={() => (
-                
                 <Avatar.Image
                   source={{
-                    uri: (user.profile_image_url) ? user.profile_image_url : "https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg",
+                    uri: user.profile_image_url
+                      ? user.profile_image_url
+                      : "https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg",
                   }}
                   size={40}
-                  style={{width: 40, height: 40}}
+                  style={{ width: 40, height: 40 }}
                   resizeMode="cover"
                 />
               )}
@@ -159,25 +193,27 @@ function CustomDrawerContent(props) {
 }
 
 const AuthNavigator = () => {
-  const token = useSelector((state) => (state.reducer.auth ? state.reducer.auth.token : null));
+  const token = useSelector((state) =>
+    state.reducer.auth ? state.reducer.auth.token : null
+  );
 
   return (
     <Drawer.Navigator
       initialRouteName={token ? "Facts" : "Login"}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-
       screenOptions={{
-        drawerPosition: 'left',
-        headerRight: false,
-        headerLeft: () => <DrawerToggleButton/>,
-    }}
+        headerShown: false,
+      }}
     >
       {token ? (
         <>
           <Drawer.Screen name="Home" component={HomeScreen} />
           <Drawer.Screen name="Facts" component={FactsScreen} />
           <Drawer.Screen name="Categories" component={CategoriesScreen} />
-          <Drawer.Screen name="CategoryDetail" component={CategoryDetailScreen} />
+          <Drawer.Screen
+            name="CategoryDetail"
+            component={CategoryDetailScreen}
+          />
           <Drawer.Screen name="Settings" component={SettingsScreen} />
           <Drawer.Screen name="Profile" component={ProfileScreen} />
         </>
@@ -201,8 +237,8 @@ const App = () => {
     <Provider store={store}>
       <SafeAreaView style={styles.drawerContent}>
         <PersistGate loading={null} persistor={persistor}>
-          <PaperProvider>
-            <NavigationContainer>
+          <PaperProvider theme={CombinedDefaultTheme}>
+            <NavigationContainer theme={CombinedDefaultTheme}>
               <AuthNavigator />
             </NavigationContainer>
           </PaperProvider>

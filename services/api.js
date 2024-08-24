@@ -3,7 +3,7 @@ import store from "./store";
 import { clearToken } from "./authSlice";
 
 const api = axios.create({
-  baseURL: "https://xd5zpvtomj.sharedwithexpose.com/api/v1",
+  baseURL: "http://192.168.68.107:8000/api/v1",
   withCredentials: true,
 });
 
