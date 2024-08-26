@@ -1,26 +1,16 @@
 import {
-  SafeAreaView,
-  View,
-  FlatList,
   StyleSheet,
   TouchableOpacity,
+  View
 } from "react-native";
 import { React, useState, useEffect } from "react";
 import PagerView from "react-native-pager-view";
-import { Avatar, Button, Card, Text, IconButton } from "react-native-paper";
-
-const Item = ({ item, onPress, backgroundColor, textColor }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={[styles.item, { backgroundColor }]}
-  >
-    <Text style={[styles.title, { color: textColor }]}>{item.title}</Text>
-  </TouchableOpacity>
-);
+import { Avatar, Button, Card, Text, IconButton, useTheme } from "react-native-paper";
+import FactCard from "./FactCard";
 
 export default function FactCards({facts}) {
+  const theme = useTheme();
   const [factItems, setFactItems] = useState([]);
-
 
   useEffect(() => {
     setFactItems(facts);
@@ -34,9 +24,6 @@ export default function FactCards({facts}) {
     // console.log(`Page scroll state changed to ${state}`, state);
   };
 
-  const LeftContent = (props) => (
-    <Avatar.Icon {...props} icon="head-question" />
-  );
 
   return (
     <>
@@ -48,20 +35,8 @@ export default function FactCards({facts}) {
           onPageScrollStateChanged={handlePageScrollStateChanged}
         >
           {factItems.map((item) => (
-            <View style={styles.page} key={item.id}>
-              <Card style={styles.card} elevation={1}>
-                <Card.Title title={item.title} left={LeftContent} />
-                <Card.Content style={{ flexGrow: 1, flexShrink: 1, height: "80%" }}>
-                  <Text style={{ fontSize: 16, lineHeight: 24 }}>
-                    {item.content}
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <IconButton icon="thumb-up" mode="contained" onPress={() => console.log('Thumb Up') } />
-                    <IconButton icon="thumb-down" mode="contained" onPress={() => console.log('Thumb Down') } />
-                  <IconButton icon="bookmark-outline" mode="contained" onPress={() => console.log('Bookmark Toggle') } />
-                </Card.Actions>
-              </Card>
+            <View style={styles.item} key={item.id}>
+              <FactCard item={item} />
             </View>
           ))}
         </PagerView>
@@ -72,9 +47,9 @@ export default function FactCards({facts}) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
-  page: {
+  item: {
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent",
@@ -82,12 +57,6 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginBottom: 20,
     marginTop: 20,
-  },
-  card: {
     flex: 1,
-    backgroundColor: '#ffffff',
-    border: 1,
-    borderColor: '#f9f9f9',
-    bprderRadius: 5,
-  },
+  }
 });

@@ -66,4 +66,24 @@ export const getCategoryDetail = async (categoryId) => {
   return response.data;
 };
 
+
+// Function to upvote a fact
+export const upvoteFact = async (factId) => {
+  const response = await api.post(`/facts/${factId}/upvote`);
+  return response.data;
+};
+
+// Function to downvote a fact
+export const downvoteFact = async (factId) => {
+  const response = await api.post(`/facts/${factId}/downvote`);
+  return response.data;
+};
+
+// Function to remove vote (optional)
+export const unvoteFact = async (factId) => {
+  const response = await api.post(`/facts/${factId}/unvote`);
+  return response.data;
+};
+
+
 export default api;
