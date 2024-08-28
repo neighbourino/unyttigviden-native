@@ -12,6 +12,8 @@ import FilterModal from "../components/FilterModal";
 import FactCards from "../components/FactCards";
 import { useNavigation } from "@react-navigation/native";
 
+import ScreenAppbar from "../components/ScreenAppbar";
+
 const FactsScreen = ({ route }) => {
   const theme = useTheme();
   const selectedCategories = useSelector((state) =>
@@ -56,16 +58,7 @@ const FactsScreen = ({ route }) => {
   return (
     <>
       <View style={styles.container}>
-        <Appbar.Header>
-          {/* Custom Drawer Icon */}
-          <Appbar.Action
-            icon="menu" // Replace with your custom icon name
-            color={theme.colors.accent} // Custom color for the icon
-            onPress={() => navigation.toggleDrawer()}
-          />
-          <Appbar.Content title="Facts" />
-          <Appbar.Action icon="filter" onPress={toggleFilterModal} />
-        </Appbar.Header>
+        <ScreenAppbar title="Facts" />
 
         {loading ? (
           <View style={styles.loadingContainer}>

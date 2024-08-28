@@ -1,244 +1,28 @@
-import { useState, useEffect } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { Provider } from "react-redux";
-import { useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
 // theme + ui
 import {
-  Provider as PaperProvider,
-  Drawer as PaperDrawer,
-  Divider,
-  Text,
-  View,
-  TouchableRipple,
-  Avatar,
-  Icon,
-  MD3Colors,
-  MD3DarkTheme,
-  MD3LightTheme,
-  adaptNavigationTheme,
-  IconButton,
-  AppHeader,
+  Provider as PaperProvider
 } from "react-native-paper";
 
 import {
-  NavigationContainer,
-  DarkTheme as NavigationDarkTheme,
-  DefaultTheme as NavigationDefaultTheme,
-  useNavigation,
+  NavigationContainer
 } from "@react-navigation/native";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerToggleButton,
-  DrawerActions,
-} from "@react-navigation/drawer";
-
-import { getHeaderTitle } from "@react-navigation/elements";
-
-import merge from "deepmerge";
-
-// screens
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import HomeScreen from "./screens/HomeScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-import SettingsScreen from "./screens/SettingsScreen";
-import FactsScreen from "./screens/FactsScreen";
-import CategoriesScreen from "./screens/CategoriesScreen";
-import CategoryDetailScreen from "./screens/CategoryDetailScreen";
-import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 
 // services
-import store, { persistor } from "./services/store";
-import { getUser } from "./services/api";
+import store, { persistor } from "./app/services/store";
 
-const Drawer = createDrawerNavigator();
-
-const { LightTheme, DarkTheme } = adaptNavigationTheme({
-  reactNavigationLight: NavigationDefaultTheme,
-  reactNavigationDark: NavigationDarkTheme,
-});
-
-const CombinedDefaultTheme = merge(MD3LightTheme, LightTheme);
-const CombinedDarkTheme = merge(MD3DarkTheme, DarkTheme);
-
-function CustomDrawerContent(props) {
-  const [active, setActive] = useState("");
-  const token = useSelector((state) =>
-    state.reducer.auth ? state.reducer.auth.token : null
-  );
-  const [user, setUser] = useState([null]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const data = await getUser();
-        setUser(data);
-      } catch (err) {
-        setError("Failed to load user data: " + err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, []);
-
-  return (
-    <DrawerContentScrollView {...props}>
-      {token ? (
-        <>
-          {user && (
-            <PaperDrawer.Item
-              label={user.name}
-              onPress={() => {
-                props.navigation.navigate("Profile");
-              }}
-              icon={() => (
-                <Avatar.Image
-                  source={{
-                    uri: user.profile_image_url
-                      ? user.profile_image_url
-                      : "https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg",
-                  }}
-                  size={40}
-                  style={{ width: 40, height: 40 }}
-                  resizeMode="cover"
-                />
-              )}
-            />
-          )}
-
-          <Divider style={{ marginBottom: 10 }} />
-
-          <PaperDrawer.Item
-            label="Home"
-            active={active === "home"}
-            onPress={() => {
-              setActive("home");
-              props.navigation.navigate("Home");
-            }}
-            icon="home"
-          />
-          <PaperDrawer.Item
-            label="Facts"
-            active={active === "facts"}
-            onPress={() => {
-              setActive("facts");
-              props.navigation.navigate("Facts");
-            }}
-            icon="head-question"
-          />
-
-          <PaperDrawer.Item
-            label="Categories"
-            active={active === "categories"}
-            onPress={() => {
-              setActive("categories");
-              props.navigation.navigate("Categories");
-            }}
-            icon="shape"
-          />
-
-          <Divider style={{ marginTop: 5, marginBottom: 5, padding: 0 }} />
-          <PaperDrawer.Item
-            label="Profile"
-            active={active === "profile"}
-            onPress={() => {
-              setActive("profile");
-              props.navigation.navigate("Profile");
-            }}
-            icon="account"
-          />
-          <PaperDrawer.Item
-            label="Settings"
-            active={active === "settings"}
-            onPress={() => {
-              setActive("settings");
-              props.navigation.navigate("Settings");
-            }}
-            icon="cog"
-          />
-        </>
-      ) : (
-        <>
-          <PaperDrawer.Section title="">
-            <PaperDrawer.Item
-              label="Login"
-              active={active === "login"}
-              onPress={() => {
-                setActive("login");
-                props.navigation.navigate("Login");
-              }}
-              icon="login"
-            />
-
-            <PaperDrawer.Item
-              label="Register"
-              active={active === "register"}
-              onPress={() => {
-                setActive("register");
-                props.navigation.navigate("Register");
-              }}
-              icon="account"
-            />
-          </PaperDrawer.Section>
-        </>
-      )}
-    </DrawerContentScrollView>
-  );
-}
-
-const AuthNavigator = () => {
-  const token = useSelector((state) =>
-    state.reducer.auth ? state.reducer.auth.token : null
-  );
-
-  return (
-    <Drawer.Navigator
-      initialRouteName={token ? "Facts" : "Login"}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      {token ? (
-        <>
-          <Drawer.Screen name="Home" component={HomeScreen} />
-          <Drawer.Screen name="Facts" component={FactsScreen} />
-          <Drawer.Screen name="Categories" component={CategoriesScreen} />
-          <Drawer.Screen
-            name="CategoryDetail"
-            component={CategoryDetailScreen}
-          />
-          <Drawer.Screen name="Settings" component={SettingsScreen} />
-          <Drawer.Screen name="Profile" component={ProfileScreen} />
-        </>
-      ) : (
-        <>
-          <Drawer.Screen name="Facts" component={FactsScreen} />
-          <Drawer.Screen name="Login" component={LoginScreen} />
-          <Drawer.Screen name="Register" component={RegisterScreen} />
-          <Drawer.Screen
-            name="ForgotPassword"
-            component={ForgotPasswordScreen}
-          />
-        </>
-      )}
-    </Drawer.Navigator>
-  );
-};
+import AuthNavigator from "./app/navigation/AuthNavigator";
 
 const App = () => {
   return (
     <Provider store={store}>
       <SafeAreaView style={styles.drawerContent}>
         <PersistGate loading={null} persistor={persistor}>
-          <PaperProvider theme={CombinedDefaultTheme}>
-            <NavigationContainer theme={CombinedDefaultTheme}>
+          <PaperProvider >
+            <NavigationContainer >
               <AuthNavigator />
             </NavigationContainer>
           </PaperProvider>
@@ -251,39 +35,6 @@ const App = () => {
 const styles = StyleSheet.create({
   drawerContent: {
     flex: 1,
-  },
-  userInfoSection: {
-    paddingLeft: 20,
-    paddingBottom: 20,
-  },
-  title: {
-    marginTop: 20,
-    fontWeight: "bold",
-  },
-  caption: {
-    fontSize: 14,
-    lineHeight: 14,
-  },
-  row: {
-    marginTop: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  section: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 15,
-  },
-  paragraph: {
-    fontWeight: "bold",
-    marginRight: 3,
-  },
-  drawerSection: {},
-  preference: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
   },
 });
 

@@ -1,16 +1,12 @@
 import {
-  SafeAreaView,
   View,
-  FlatList,
   StyleSheet,
-  StatusBar,
   TouchableOpacity,
 } from "react-native";
-import AuthContext from "../contexts/AuthContext";
 import { React, useContext, useEffect, useState } from "react";
 import PagerView from "react-native-pager-view";
 import axios from "../utils/axios";
-import { Avatar, Button, Card, Text, IconButton } from "react-native-paper";
+import { Avatar, Card, Text, IconButton } from "react-native-paper";
 
 const Item = ({ item, onPress, backgroundColor, textColor }) => (
   <TouchableOpacity

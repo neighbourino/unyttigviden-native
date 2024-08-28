@@ -13,6 +13,8 @@ import { setToken } from "../services/authSlice";
 import { login } from "../services/api";
 import { useNavigation } from "@react-navigation/native";
 
+import ScreenAppbar from "../components/ScreenAppbar";
+
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,27 +50,13 @@ const LoginScreen = () => {
 
   return (
     <>
-      <View
-        style={{
-          marginBottom: 0,
-          backgroundColor: theme.colors.primary,
-          paddingTop: 30,
-          paddingBottom: 30,
-          borderRadius: 0,
-        }}
-      >
-        <Headline
-          style={{
-            color: theme.colors.onPrimary,
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
-          Login
-        </Headline>
-      </View>
+      
       <View style={styles.container}>
-        <View style={styles.inputWrapper}>
+        <ScreenAppbar title="Log ind" />
+
+        <View style={styles.screenContent}>
+
+          <View style={styles.inputWrapper}>
           <TextInput
             label="Email"
             value={email}
@@ -123,6 +111,9 @@ const LoginScreen = () => {
         >
           Forgot Password?
         </Button>
+          </View>
+
+        
       </View>
     </>
   );
@@ -131,8 +122,12 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     padding: 20,
+  },
+  screenContent: {
+    flex: 1,
+    // justifyContent: "center",
+    paddingTop: 30,
   },
   inputWrapper: {
     marginBottom: 20,
