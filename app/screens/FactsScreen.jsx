@@ -58,7 +58,16 @@ const FactsScreen = ({ route }) => {
   return (
     <>
       <View style={styles.container}>
-        <ScreenAppbar title="Facts" />
+        <Appbar.Header>
+          <Appbar.Action
+            icon="menu" // Replace with your custom icon name
+            color={theme.colors.accent} // Custom color for the icon
+            onPress={() => navigation.toggleDrawer()}
+          />
+          <Appbar.Content title="Facts" />
+          <Appbar.Action icon="filter" onPress={toggleFilterModal} />
+        </Appbar.Header>
+
 
         {loading ? (
           <View style={styles.loadingContainer}>

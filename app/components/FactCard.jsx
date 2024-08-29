@@ -10,23 +10,15 @@ import {
   Portal,
   Button,
 } from "react-native-paper";
-import { upvoteFact, downvoteFact, unvoteFact } from "../services/api";
+import { upvoteFact, downvoteFact, unvoteFact, toggleBookmark } from "../services/api";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-
-const Item = ({ item, onPress, backgroundColor, textColor }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={[styles.item, { backgroundColor }]}
-  >
-    <Text style={[styles.title, { color: textColor }]}>{item.title}</Text>
-  </TouchableOpacity>
-);
 
 export default function FactCard({ item }) {
   const theme = useTheme();
   const [fact, setFact] = useState(null);
   const [voteStatus, setVoteStatus] = useState(item.user_vote);
+  const [bookmarkStatus, setBookmarkStatus] = useState(item.user_bookmark);
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,9 +34,6 @@ export default function FactCard({ item }) {
     state.reducer.auth ? state.reducer.auth.token : null
   );
 
-  useEffect(() => {
-    setFact(item);
-  }, [item]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -96,6 +85,16 @@ export default function FactCard({ item }) {
     }
   };
 
+  const handleToggleBookmark = async (factId) => {
+    try {
+      const data = await toggleBookmark(factId);
+      setBookmarkStatus(!bookmarkStatus);
+      // Update UI based on the response
+    } catch (err) {
+      console.error("Failed to toggle bookmark on fact:", err);
+    }
+  };
+
   return (
     <Card style={styles.card} elevation={1}>
       <Card.Title title={item.title} left={LeftContent} />
@@ -118,7 +117,7 @@ export default function FactCard({ item }) {
           size={20}
           mode="contained"
           onPress={function () {
-            if (user) {
+            if (token) {
               voteStatus == "upvoted"
                 ? handleUnvote(item.id)
                 : handleUpvote(item.id);
@@ -149,8 +148,18 @@ export default function FactCard({ item }) {
         />
         <IconButton
           icon="bookmark-outline"
+          iconColor={
+            bookmarkStatus
+              ? theme.colors.onPrimary
+              : theme.colors.primary
+          }
+          backgroundColor={
+            bookmarkStatus
+              ? theme.colors.primary
+              : theme.colors.onPrimary
+          }
           mode="contained"
-          onPress={() => console.log("Bookmark Toggle")}
+          onPress={() => handleToggleBookmark(item.id)}
         />
       </Card.Actions>
       <Portal>

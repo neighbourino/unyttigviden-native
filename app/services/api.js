@@ -85,5 +85,15 @@ export const unvoteFact = async (factId) => {
   return response.data;
 };
 
+export const toggleBookmark = async (factId) => {
+  const response = await api.post(`/facts/${factId}/bookmark`);
+  return response.data;
+};
+
+// Get bookmarks function
+export const getBookmarks = async () => {
+  const response = await api.get("/bookmarks");
+  return response.data;
+};
 
 export default api;
